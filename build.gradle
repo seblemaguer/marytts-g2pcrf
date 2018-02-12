@@ -59,7 +59,7 @@ task autoFormatCode() {
 ***********************************************************************************************/
 version '0.1'
 group "de.dfki.mary"
-description "MaryTTS integration of Surprisal"
+description "CRF based G2P module for MaryTTS"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -79,7 +79,7 @@ publishing {
             url "$rootProject.buildDir/repo"
         }
         maven {
-            url version.endsWith('-SNAPSHOT') ? 'https://oss.jfrog.org/artifactory/oss-snapshot-local' : 'https://api.bintray.com/maven/m2ci-msp/maven/jtgt'
+//            url version.endsWith('-SNAPSHOT') ? 'https://oss.jfrog.org/artifactory/oss-snapshot-local' : 'https://api.bintray.com/maven/m2ci-msp/maven/jtgt'
             credentials {
                 username = findProperty('bintrayUser')
                 password = findProperty('bintrayApiKey')
