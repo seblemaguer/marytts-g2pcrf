@@ -28,7 +28,6 @@ import marytts.modules.nlp.phonemiser.AllophoneSet;
 import marytts.MaryException;
 import marytts.exceptions.MaryConfigurationException;
 
-
 // Parsing
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -47,7 +46,7 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-//
+// G2P CRF
 import com.github.steveash.jg2p.model.CmuEncoderFactory;
 import com.github.steveash.jg2p.SimpleEncoder;
 import com.github.steveash.jg2p.model.CmuSyllabifierFactory;
@@ -63,6 +62,10 @@ import marytts.data.item.linguistic.Word;
 import marytts.data.item.phonology.Phoneme;
 import marytts.data.item.phonology.Syllable;
 import marytts.data.item.phonology.Accent;
+
+// Alphabet
+import marytts.phonetic.converter.Alphabet;
+import marytts.phonetic.AlphabetFactory;
 
 // JSON part
 import org.json.simple.JSONArray;
@@ -256,9 +259,11 @@ public class G2PCRFModule extends MaryModule {
 
 
             for (String syl : syl_val) {
-		String[] syl_tokens = syl.trim().split(" ");
+		if (syl.equals(" "))
+		    continue;
+		String[] syl_tokens = syl.trim().split(" +");
 		for (String token: syl_tokens) {
-		    System.out.println("Dealing with \"" + token + "\"");
+
 
 		    // First stress
 		    if (token.equals(FIRST_STRESS)) {
@@ -269,6 +274,8 @@ public class G2PCRFModule extends MaryModule {
 		    else if (token.equals(SECOND_STRESS)) {
 			stress = 2;
 		    } else {
+			Alphabet al = AlphabetFactory.getAlphabet("arpabet");
+			token = al.getCorrespondingIPA(token);
 			Phoneme cur_ph = new Phoneme(token);
 			phones.add(cur_ph);
 		    }

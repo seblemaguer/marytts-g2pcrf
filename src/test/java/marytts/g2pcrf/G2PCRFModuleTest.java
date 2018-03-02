@@ -1,5 +1,6 @@
 package marytts.g2pcrf;
 
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.*;
@@ -16,7 +17,12 @@ public class G2PCRFModuleTest
 	G2PCRFModule crf = new G2PCRFModule();
 	crf.startup();
 	crf.checkStartup();
+	StringBuilder sb = new StringBuilder();
+	List<String> ph = crf.phonemise("aaron", null, sb);
+	System.out.println(ph);
+	Assert.assertNotNull(ph);
     }
+
 }
 
 
