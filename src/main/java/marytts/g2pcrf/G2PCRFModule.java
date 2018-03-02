@@ -134,15 +134,18 @@ public class G2PCRFModule extends MaryModule {
     public List<String> phonemise(String text, String pos, StringBuilder g2pMethod) throws MaryException {
 	try {
 
-	    // returns a space separated arpabet encoding of the given word*
-	    String result = encoder.encodeBestAsSpaceString(text);
-
 	    // splits the word into a list of the word's syllables
-	    List<String> syllables = syllabifier.splitIntoSyllables(result);
+	    List<String> syllables = syllabifier.splitIntoSyllables(text);
 
-	    if (result != null) {
+	    List<String> ph = new ArrayList<String>();
+	    for (String syl: syllables) {
+		ph.add(encoder.encodeBestAsSpaceString(syl));
+	    }
+
+
+	    if (ph != null) {
 		g2pMethod.append("crf");
-		return syllables;
+		return ph;
 	    }
 
 	} catch (Exception ex) {
