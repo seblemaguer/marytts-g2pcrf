@@ -15,7 +15,6 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-    mavenLocal()
     jcenter()
     maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
 }
@@ -57,7 +56,7 @@ task autoFormatCode() {
 /**********************************************************************************************
  ** Project meta + publishing part
 ***********************************************************************************************/
-version '0.1'
+version '0.1-SNAPSHOT'
 group "de.dfki.mary"
 description "CRF based G2P module for MaryTTS"
 
@@ -79,7 +78,7 @@ publishing {
             url "$rootProject.buildDir/repo"
         }
         maven {
-//            url version.endsWith('-SNAPSHOT') ? 'https://oss.jfrog.org/artifactory/oss-snapshot-local' : 'https://api.bintray.com/maven/m2ci-msp/maven/jtgt'
+            url version.endsWith('-SNAPSHOT') ? 'https://oss.jfrog.org/artifactory/oss-snapshot-local' : 'https://api.bintray.com/maven/marytts/marytts/marytts'
             credentials {
                 username = findProperty('bintrayUser')
                 password = findProperty('bintrayApiKey')
