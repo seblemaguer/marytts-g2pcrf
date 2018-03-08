@@ -93,13 +93,13 @@ public class G2PCRFModule extends MaryModule {
     private short port = 5000;
 
     public G2PCRFModule() {
-	super();
+        super();
 
-	String defaultRegex = "\\$PUNCT";
-	punctuationPosRegex = Pattern.compile(defaultRegex);
+        String defaultRegex = "\\$PUNCT";
+        punctuationPosRegex = Pattern.compile(defaultRegex);
 
-	defaultRegex = "^[^a-zA-Z]+$";
-	unpronounceablePosRegex = Pattern.compile(defaultRegex);
+        defaultRegex = "^[^a-zA-Z]+$";
+        unpronounceablePosRegex = Pattern.compile(defaultRegex);
     }
 
     public void checkStartup() throws MaryConfigurationException {
@@ -107,10 +107,10 @@ public class G2PCRFModule extends MaryModule {
 
     public void startup() throws MaryException {
 
-	encoder = CmuEncoderFactory.createSimple();
-	syllabifier = CmuSyllabifierFactory.create();
+        encoder = CmuEncoderFactory.createSimple();
+        syllabifier = CmuSyllabifierFactory.create();
 
-	super.startup();
+        super.startup();
     }
 
 
@@ -132,27 +132,27 @@ public class G2PCRFModule extends MaryModule {
      *         no phonemisation method was successful.
      */
     public List<String> phonemise(String text, String pos, StringBuilder g2pMethod) throws MaryException {
-	try {
+        try {
 
-	    // splits the word into a list of the word's syllables
-	    List<String> syllables = syllabifier.splitIntoSyllables(text);
+            // splits the word into a list of the word's syllables
+            List<String> syllables = syllabifier.splitIntoSyllables(text);
 
-	    List<String> ph = new ArrayList<String>();
-	    for (String syl: syllables) {
-		ph.add(encoder.encodeBestAsSpaceString(syl));
-	    }
+            List<String> ph = new ArrayList<String>();
+            for (String syl : syllables) {
+                ph.add(encoder.encodeBestAsSpaceString(syl));
+            }
 
 
-	    if (ph != null) {
-		g2pMethod.append("crf");
-		return ph;
-	    }
+            if (ph != null) {
+                g2pMethod.append("crf");
+                return ph;
+            }
 
-	} catch (Exception ex) {
-	    throw new MaryException("Can't phonemise \"" + text + "\"", ex);
-	}
+        } catch (Exception ex) {
+            throw new MaryException("Can't phonemise \"" + text + "\"", ex);
+        }
 
-	throw new MaryException("Should not be null!");
+        throw new MaryException("Should not be null!");
     }
 
     /**
@@ -163,86 +163,86 @@ public class G2PCRFModule extends MaryModule {
      *  @throws MaryException which indicates what is missing if something is missing
      */
     public void checkInput(Utterance utt) throws MaryException {
-	if (!utt.hasSequence(SupportedSequenceType.WORD)) {
-	    throw new MaryException("Word sequence is missing", null);
-	}
+        if (!utt.hasSequence(SupportedSequenceType.WORD)) {
+            throw new MaryException("Word sequence is missing", null);
+        }
     }
 
     public Utterance process(Utterance utt, MaryConfiguration configuration) throws MaryException {
 
-	try {
-	    Sequence<Word> words = (Sequence<Word>) utt.getSequence(SupportedSequenceType.WORD);
-	    Sequence<Syllable> syllables = new Sequence<Syllable>();
-	    ArrayList<IntegerPair> alignment_word_phone = new ArrayList<IntegerPair>();
+        try {
+            Sequence<Word> words = (Sequence<Word>) utt.getSequence(SupportedSequenceType.WORD);
+            Sequence<Syllable> syllables = new Sequence<Syllable>();
+            ArrayList<IntegerPair> alignment_word_phone = new ArrayList<IntegerPair>();
 
-	    Sequence<Phoneme> phones = new Sequence<Phoneme>();
-	    ArrayList<IntegerPair> alignment_syllable_phone = new ArrayList<IntegerPair>();
+            Sequence<Phoneme> phones = new Sequence<Phoneme>();
+            ArrayList<IntegerPair> alignment_syllable_phone = new ArrayList<IntegerPair>();
 
-	    Relation rel_words_sent = utt.getRelation(SupportedSequenceType.SENTENCE,
-						      SupportedSequenceType.WORD)
-		.getReverse();
-	    HashSet<IntegerPair> alignment_word_phrase = new HashSet<IntegerPair>();
+            Relation rel_words_sent = utt.getRelation(SupportedSequenceType.SENTENCE,
+                                      SupportedSequenceType.WORD)
+                                      .getReverse();
+            HashSet<IntegerPair> alignment_word_phrase = new HashSet<IntegerPair>();
 
-	    for (int i_word = 0; i_word < words.size(); i_word++) {
-		Word w = words.get(i_word);
+            for (int i_word = 0; i_word < words.size(); i_word++) {
+                Word w = words.get(i_word);
 
-		String text;
+                String text;
 
-		if (w.soundsLike() != null) {
-		    text = w.soundsLike();
-		} else {
-		    text = w.getText();
-		}
-
-
-		// Get POS
-		String pos = w.getPOS();
+                if (w.soundsLike() != null) {
+                    text = w.soundsLike();
+                } else {
+                    text = w.getText();
+                }
 
 
-		// Ok adapt phonemes now
-		ArrayList<List<String>> phonetisation_val = new ArrayList<List<String>>();
-		if (maybePronounceable(text, pos)) {
+                // Get POS
+                String pos = w.getPOS();
 
-		    // If text consists of several parts (e.g., because that was
-		    // inserted into the sounds_like attribute), each part
-		    // is transcribed separately.
-		    StringBuilder ph = new StringBuilder();
-		    String g2p_method = null;
-		    StringTokenizer st = new StringTokenizer(text, " -");
-		    while (st.hasMoreTokens()) {
-			String graph = st.nextToken();
-			StringBuilder helper = new StringBuilder();
-			List<String> list_syllables = phonemise(graph, pos, helper);
 
-			g2p_method = helper.toString();
+                // Ok adapt phonemes now
+                ArrayList<List<String>> phonetisation_val = new ArrayList<List<String>>();
+                if (maybePronounceable(text, pos)) {
 
-		       phonetisation_val.add(list_syllables);
-		    }
+                    // If text consists of several parts (e.g., because that was
+                    // inserted into the sounds_like attribute), each part
+                    // is transcribed separately.
+                    StringBuilder ph = new StringBuilder();
+                    String g2p_method = null;
+                    StringTokenizer st = new StringTokenizer(text, " -");
+                    while (st.hasMoreTokens()) {
+                        String graph = st.nextToken();
+                        StringBuilder helper = new StringBuilder();
+                        List<String> list_syllables = phonemise(graph, pos, helper);
 
-		    if (phonetisation_val.size() > 0) {
+                        g2p_method = helper.toString();
 
-			createSubStructure(w, phonetisation_val, syllables, phones,
-					   alignment_syllable_phone, i_word, alignment_word_phone);
+                        phonetisation_val.add(list_syllables);
+                    }
 
-			// Adapt G2P method
-			w.setG2PMethod(g2p_method);
-		    }
-		}
-	    }
+                    if (phonetisation_val.size() > 0) {
 
-	    // Relation word/syllable
-	    utt.addSequence(SupportedSequenceType.SYLLABLE, syllables);
-	    Relation rel_word_phone = new Relation(words, phones, alignment_word_phone);
-	    utt.setRelation(SupportedSequenceType.WORD, SupportedSequenceType.PHONE, rel_word_phone);
+                        createSubStructure(w, phonetisation_val, syllables, phones,
+                                           alignment_syllable_phone, i_word, alignment_word_phone);
 
-	    utt.addSequence(SupportedSequenceType.PHONE, phones);
-	    Relation rel_syllable_phone = new Relation(syllables, phones, alignment_syllable_phone);
-	    utt.setRelation(SupportedSequenceType.SYLLABLE, SupportedSequenceType.PHONE, rel_syllable_phone);
+                        // Adapt G2P method
+                        w.setG2PMethod(g2p_method);
+                    }
+                }
+            }
 
-	    return utt;
-	} catch (Exception ex) {
-	    throw new MaryException("can't process the phonetisation", ex);
-	}
+            // Relation word/syllable
+            utt.addSequence(SupportedSequenceType.SYLLABLE, syllables);
+            Relation rel_word_phone = new Relation(words, phones, alignment_word_phone);
+            utt.setRelation(SupportedSequenceType.WORD, SupportedSequenceType.PHONE, rel_word_phone);
+
+            utt.addSequence(SupportedSequenceType.PHONE, phones);
+            Relation rel_syllable_phone = new Relation(syllables, phones, alignment_syllable_phone);
+            utt.setRelation(SupportedSequenceType.SYLLABLE, SupportedSequenceType.PHONE, rel_syllable_phone);
+
+            return utt;
+        } catch (Exception ex) {
+            throw new MaryException("can't process the phonetisation", ex);
+        }
     }
 
 
@@ -262,43 +262,44 @@ public class G2PCRFModule extends MaryModule {
 
 
             for (String syl : syl_val) {
-		if (syl.equals(" "))
-		    continue;
-		String[] syl_tokens = syl.trim().split(" +");
-		for (String token: syl_tokens) {
+                if (syl.equals(" ")) {
+                    continue;
+                }
+                String[] syl_tokens = syl.trim().split(" +");
+                for (String token : syl_tokens) {
 
 
-		    // First stress
-		    if (token.equals(FIRST_STRESS)) {
-			stress = 1;
-			accent = w.getAccent();
-		    }
-		    // Second stress
-		    else if (token.equals(SECOND_STRESS)) {
-			stress = 2;
-		    } else {
-			Alphabet al = AlphabetFactory.getAlphabet("arpabet");
-			token = al.getCorrespondingIPA(token);
-			Phoneme cur_ph = new Phoneme(token);
-			phones.add(cur_ph);
-		    }
-		}
+                    // First stress
+                    if (token.equals(FIRST_STRESS)) {
+                        stress = 1;
+                        accent = w.getAccent();
+                    }
+                    // Second stress
+                    else if (token.equals(SECOND_STRESS)) {
+                        stress = 2;
+                    } else {
+                        Alphabet al = AlphabetFactory.getAlphabet("arpabet");
+                        token = al.getCorrespondingIPA(token);
+                        Phoneme cur_ph = new Phoneme(token);
+                        phones.add(cur_ph);
+                    }
+                }
 
-		// Create the syllable (FIXME: and the stress?)
-		syllables.add(new Syllable(tone, stress, accent));
+                // Create the syllable (FIXME: and the stress?)
+                syllables.add(new Syllable(tone, stress, accent));
 
-		// Update the phone/syllable relation
-		for (; phone_offset < phones.size(); phone_offset++) {
-		    alignment_syllable_phone.add(new IntegerPair(syllables.size() - 1, phone_offset));
-		    alignment_word_phone.add(new IntegerPair(word_index, phone_offset));
-		}
+                // Update the phone/syllable relation
+                for (; phone_offset < phones.size(); phone_offset++) {
+                    alignment_syllable_phone.add(new IntegerPair(syllables.size() - 1, phone_offset));
+                    alignment_word_phone.add(new IntegerPair(word_index, phone_offset));
+                }
 
-		// Reinit for the next part
-		tone = null;
-		stress = 0;
-		accent = null;
-	    }
-	}
+                // Reinit for the next part
+                tone = null;
+                stress = 0;
+                accent = null;
+            }
+        }
     }
 
 
