@@ -22,7 +22,6 @@ package marytts.g2pcrf;
 // Mary baseline
 import marytts.modules.MaryModule;
 import marytts.config.MaryConfiguration;
-import marytts.modules.nlp.phonemiser.AllophoneSet;
 
 // Exceptions
 import marytts.MaryException;
@@ -82,24 +81,24 @@ public class G2PCRFModule extends MaryModule {
     protected final String FIRST_STRESS = "'";
     protected final String SECOND_STRESS = ",";
 
-    protected AllophoneSet allophoneSet;
-
     public Pattern punctuationPosRegex;
     protected Pattern unpronounceablePosRegex;
 
     private SimpleEncoder encoder;
     private Syllabifier syllabifier;
-    private String hostname = "localhost";
-    private short port = 5000;
 
     public G2PCRFModule() {
-        super();
+        super("phonemiser");
 
         String defaultRegex = "\\$PUNCT";
         punctuationPosRegex = Pattern.compile(defaultRegex);
 
         defaultRegex = "^[^a-zA-Z]+$";
         unpronounceablePosRegex = Pattern.compile(defaultRegex);
+    }
+
+    protected void setDescription() {
+	this.description = "CRF phonetisation module.";
     }
 
     public void checkStartup() throws MaryConfigurationException {
