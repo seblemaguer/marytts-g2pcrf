@@ -1,18 +1,10 @@
-// buildscript {
-//   repositories {
-//     maven {
-//       url 'https://oss.jfrog.org/oss-snapshot-local'
-//     }
-//   }
-// }
-
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     jcenter()

@@ -23,8 +23,8 @@ package marytts.g2pcrf;
 import marytts.config.JSONMaryConfigLoader;
 import marytts.exceptions.MaryConfigurationException;
 
-public class G2PCRFConfig extends JSONMaryConfigLoader {
-    public G2PCRFConfig() throws MaryConfigurationException {
+public class G2PCRFConfigLoader extends JSONMaryConfigLoader {
+    public G2PCRFConfigLoader() throws MaryConfigurationException {
         super();
     }
 }

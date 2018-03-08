@@ -1,6 +1,4 @@
 {
     "marytts.g2pcrf.G2PCRFModule": {
-	"hostname": "localhost",
-	"port": 5000
     }
 }
